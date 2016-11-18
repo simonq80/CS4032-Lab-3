@@ -10,8 +10,9 @@ import Control.Concurrent
 import Control.Exception
 import Data.List.Split
 import Control.Concurrent.MVar
+import System.Random
 
-type ChatList = [(Socket, String, String)] -- socket name chat
+type ChatList = [(Socket, String, String, String)] -- socket name chat joinid
 
 main = do
     port:_ <- getArgs
@@ -28,7 +29,7 @@ createConnection p = do
     listen s 10
     return s
 
-connLoop :: Socket -> MVar Int -> MVar [(Socket, String, String)] -> IO ()
+connLoop :: Socket -> MVar Int -> MVar [(Socket, String, String, String)] -> IO ()
 connLoop s mvar chatList = do
     (soc, socA) <- accept s
     id <- myThreadId
@@ -41,7 +42,7 @@ connLoop s mvar chatList = do
         else forkIO $ close soc
     connLoop s mvar chatList
 
-handleConn :: MVar Int -> (Socket, SockAddr) -> ThreadId -> MVar [(Socket, String, String)] -> IO ()
+handleConn :: MVar Int -> (Socket, SockAddr) -> ThreadId -> MVar [(Socket, String, String, String)] -> IO ()
 handleConn mvar (s, sa) id chatList = do 
     input <- recv s 4096
     parseMessage s id (B8.unpack input) chatList
@@ -55,7 +56,7 @@ handleConn mvar (s, sa) id chatList = do
         else handleConn mvar (s, sa) id chatList
 
 
-parseMessage :: Socket -> ThreadId -> String -> MVar [(Socket, String, String)] ->  IO ()
+parseMessage :: Socket -> ThreadId -> String -> MVar [(Socket, String, String, String)] ->  IO ()
 parseMessage s id [] _ = do
     threadDelay 10000
 parseMessage s id ('K':'I':'L':'L':'_':'S':'E':'R':'V':'I':'C':'E':_) _ = do
@@ -69,19 +70,23 @@ parseMessage s _ ('J':'O':'I':'N':m) chatList = do
     addClient s m chatList "chat1"
 parseMessage s _ ('L':'E':'A':'V':'E':m) chatList = do
     removeClient s m chatList
+--parseMessage s _ ('S':'E':'N':'D':m) chatList = do
+--    sendMessage s "name" m
 parseMessage s _ m _ = do
     putStrLn ("some other message recieved(" ++ m ++ ")")
 
-addClient :: Socket -> String -> MVar [(Socket, String, String)] -> String -> IO ()
+addClient :: Socket -> String -> MVar [(Socket, String, String, String)] -> String -> IO ()
 addClient s name chatList chatName = do
     list <- takeMVar chatList
-    putMVar chatList ((s, name, chatName):list)
+    g <- getStdGen
+    putMVar chatList ((s, name, chatName, (take 10 (randomRs ('a', 'z') g))):list)
 
-removeClient :: Socket -> String -> MVar [(Socket, String, String)] -> IO ()
+removeClient :: Socket -> String -> MVar [(Socket, String, String, String)] -> IO ()
 removeClient s chatName chatList = do
     list <- takeMVar chatList
     putMVar chatList (filter (filterClient s chatName) list) 
 
-filterClient :: Socket -> String -> (Socket, String, String) -> Bool
-filterClient s chatName (s1, _, chatName1) = (s == s1) && (chatName == chatName1)
+filterClient :: Socket -> String -> (Socket, String, String, String) -> Bool
+filterClient s chatName (s1, _, chatName1, _) = (s == s1) && (chatName == chatName1)
 filterClient _ _ _ = False
+
