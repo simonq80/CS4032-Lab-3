@@ -65,5 +65,23 @@ parseMessage s _  ('H':'E':'L':'O':m) _ = do
     name <- getSocketName s
     send s  (B8.pack $ ("HELO" ++ m ++ "IP:" ++ ((splitOn ":" (show name))!!0) ++ "\nPort:"++ ((splitOn ":" (show name))!!1) ++ "\nStudentID:13327420\n"))
     putStrLn "Helo text sent"
+parseMessage s _ ('J':'O':'I':'N':m) chatList = do
+    addClient s m chatList "chat1"
+parseMessage s _ ('L':'E':'A':'V':'E':m) chatList = do
+    removeClient s m chatList
 parseMessage s _ m _ = do
     putStrLn ("some other message recieved(" ++ m ++ ")")
+
+addClient :: Socket -> String -> MVar [(Socket, String, String)] -> String -> IO ()
+addClient s name chatList chatName = do
+    list <- takeMVar chatList
+    putMVar chatList ((s, name, chatName):list)
+
+removeClient :: Socket -> String -> MVar [(Socket, String, String)] -> IO ()
+removeClient s chatName chatList = do
+    list <- takeMVar chatList
+    putMVar chatList (filter (filterClient s chatName) list) 
+
+filterClient :: Socket -> String -> (Socket, String, String) -> Bool
+filterClient s chatName (s1, _, chatName1) = (s == s1) && (chatName == chatName1)
+filterClient _ _ _ = False
