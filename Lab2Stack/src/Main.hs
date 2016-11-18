@@ -11,11 +11,14 @@ import Control.Exception
 import Data.List.Split
 import Control.Concurrent.MVar
 
+type ChatList = [(Socket, String, String)] -- socket name chat
+
 main = do
     port:_ <- getArgs
     s <- createConnection (read port)
     mvar <- newMVar 0
-    connLoop s mvar
+    chatList <- newMVar []
+    connLoop s mvar chatList
 
 createConnection:: Int -> IO Socket
 createConnection p = do 
@@ -25,8 +28,8 @@ createConnection p = do
     listen s 10
     return s
 
-connLoop :: Socket -> MVar Int -> IO ()
-connLoop s mvar = do
+connLoop :: Socket -> MVar Int -> MVar [(Socket, String, String)] -> IO ()
+connLoop s mvar chatList = do
     (soc, socA) <- accept s
     id <- myThreadId
     mval <- takeMVar mvar
@@ -36,7 +39,7 @@ connLoop s mvar = do
     if (mval <=8)
         then forkIO $ handleConn mvar (soc, socA) id
         else forkIO $ close soc
-    connLoop s mvar
+    connLoop s mvar chatList
 
 handleConn :: MVar Int -> (Socket, SockAddr) -> ThreadId -> IO ()
 handleConn mvar (s, sa) id = do 
