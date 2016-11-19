@@ -36,10 +36,10 @@ connLoop s mvar chatList = do
     (soc, socA) <- accept s
     id <- myThreadId
     mval <- takeMVar mvar
-    if (mval <=100)
+    if (mval <=1000)
         then putMVar mvar (mval+1)
         else putMVar mvar mval
-    if (mval <=100)
+    if (mval <=1000)
         then forkIO $ handleConn mvar (soc, socA) id chatList
         else forkIO $ close soc
     connLoop s mvar chatList
@@ -74,13 +74,35 @@ parseMessage s _ ('J':'O':'I':'N':'_':m) chatList = do
 parseMessage s _ ('L':'E':'A':'V':'E':'_':m) chatList = do
     removeClient s (matchRegex (mkRegex "CHATROOM:(.*)\nJOIN_ID:(.*)\nCLIENT_NAME:(.*)\n") m) chatList
 parseMessage s _ ('C':'H':'A':'T':':':m) chatList = do
-    sendMessage s (matchRegex (mkRegex "(.*)\nJOINID:(.*)\nCLIENT_NAME:(.*)\nMESSAGE:(.*)\n\n") m) chatList
-parseMessage s _ ('D':'I':'S':'C':_) chatList = do
+    sendMessage s (matchRegex (mkRegex "(.*)\nJOIN_ID:(.*)\nCLIENT_NAME:(.*)\nMESSAGE:(.*)\n\n") m) chatList
+parseMessage s _ ('D':'I':'S':'C':m) chatList = do
+    disconnectClient s (matchRegex (mkRegex "ONNECT:0\nPORT:0\nCLIENT_NAME:(.*)\n") m) chatList
     close s
     tid <- myThreadId
     killThread tid
 parseMessage s _ m _ = do
     putStrLn ("some other message recieved(" ++ m ++ ")")
+
+
+disconnectClient :: Socket -> Maybe [String] -> MVar [(Socket, String, String, Int, Int)] -> IO ()
+disconnectClient s (Just (name:_)) chatList = do
+    list <- readMVar chatList
+    mapM_ (discSend s (getJoinId s list) name chatList) (getChats s list)  
+    close s
+    tid <- myThreadId
+    killThread tid
+
+discSend :: Socket -> Int -> String -> MVar [(Socket, String, String, Int, Int)] -> Int -> IO()
+discSend s jid name chatList ref = do 
+   sendMessage s (Just [(show ref), (show jid), name, (name++" has disconnected.")]) chatList
+   list <- takeMVar chatList
+   putMVar chatList (filter (filterClient s ref jid) list)
+
+getChats :: Socket -> [(Socket, String, String, Int, Int)] -> [Int]
+getChats s list = reverse $ map (\(a,b,c,d,e) -> e) (filter (socketFilter s) list)
+
+socketFilter :: Socket -> (Socket, String, String, Int, Int) -> Bool
+socketFilter s (a,b,c,d,e) = s==a
 
 addClient :: Socket -> Maybe [String] -> MVar [(Socket, String, String, Int, Int)] -> IO ()
 addClient s Nothing chatList  = do
@@ -90,8 +112,8 @@ addClient s (Just (a:b:_)) chatList  = do
     list <- takeMVar chatList
     putMVar chatList ((s, b, a, (getJoinId s list), (getRoomRef a list)):list)
     name <- getSocketName s
-    send s (B8.pack $ "JOINED_CHATROOM:"++a++"\nSERVER_IP:"++((splitOn ":" (show name))!!0)++"\nPORT:"++((splitOn ":" (show name))!!1)++"\nROOM_REF:"++(show (getRoomRef a list))++"\nJOIN_ID:"++(show (getJoinId s list))++"\n\n")
-    sendMessage s (Just [(show (getRoomRef a list)), (show (getJoinId s list)), b, "USER HAS JOINED"]) chatList
+    send s (B8.pack $ "JOINED_CHATROOM:"++a++"\nSERVER_IP:"++((splitOn ":" (show name))!!0)++"\nPORT:"++((splitOn ":" (show name))!!1)++"\nROOM_REF:"++(show (getRoomRef a list))++"\nJOIN_ID:"++(show (getJoinId s list))++"\n")
+    sendMessage s (Just [(show (getRoomRef a list)), (show (getJoinId s list)), b, (b ++ " has joined this chatroom.")]) chatList
     cl <- readMVar chatList
     putStrLn $ show $ cl
 
@@ -100,9 +122,10 @@ removeClient s Nothing _ = do
     send s (B8.pack $ "ERROR_CODE:0\nERROR_DESCRIPTION:Invalid message\n\n")
     putStrLn "Invalid message sent"
 removeClient s (Just (a:b:c:_)) chatList = do
+    send s (B8.pack $ "LEFT_CHATROOM:"++a++"\nJOIN_ID:"++b++"\n")
+    sendMessage s (Just [a, b, c, (c++" has left this chatroom.")]) chatList 
     list <- takeMVar chatList
     putMVar chatList (filter (filterClient s (read a) (read b)) list)
-    send s (B8.pack $ "LEFT_CHATROOM:"++(show a)++"\nJOIN_ID:"++(show b)++"\n\n")
     cl <- readMVar chatList
     putStrLn $ show $ cl 
 
@@ -128,7 +151,7 @@ sendToRoom ref name mess ((s, _, _, _, cid):xs) = do
     
 
 filterClient :: Socket -> Int -> Int  -> (Socket, String, String, Int, Int) -> Bool
-filterClient s a b (s1, _, _, b1,a1) = (s /= s1) && (a /= a1) && (b /= b1)
+filterClient s a b (s1, _, _, b1,a1) = (s /= s1) || (a /= a1) || (b /= b1)
 filterClient  _ _ _ _ = False
 
 getJoinId :: Socket -> [(Socket, String, String, Int, Int)] -> Int
