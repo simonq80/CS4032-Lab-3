@@ -146,9 +146,7 @@ sendToRoom ref name mess ((s, _, _, _, cid):xs) = do
     if(ref == cid)
         then do 
             send s (B8.pack $ "CHAT:"++(show ref)++"\nCLIENT_NAME:"++name++"\nMESSAGE:"++mess++"\n\n")
-            name <- getSocketName s
-            putStrLn ("message sent to " ++ (show name))
-        else return ()
+        else return 0
     sendToRoom ref name mess xs
     
 
