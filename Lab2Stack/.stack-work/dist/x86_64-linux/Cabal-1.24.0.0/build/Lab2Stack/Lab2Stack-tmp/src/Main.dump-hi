@@ -1,11 +1,11 @@
 
 ==================== FINAL INTERFACE ====================
-2016-11-19 19:46:20.516558 UTC
+2016-11-19 22:49:46.136068 UTC
 
 interface main@main:Main 8001
-  interface hash: 75d777a965ec08bde90d24ff0c5948d3
-  ABI hash: 876321b83ed18f2ce5662be94bc9c3ca
-  export-list hash: 6941fe97890bab30025a5a39d6a443ce
+  interface hash: f413dafeda1339bddf3e14d57116990b
+  ABI hash: e518881e30f3b1b10749517c8abba949
+  export-list hash: 4d7285cb9bd331e0a83663f39808e216
   orphan hash: 693e9af84d3dfcc71e640e005bdc5e2e
   flag hash: 6f9b46074b8e07742d1390f2d38a30d1
   sig of: Nothing
@@ -32,7 +32,6 @@ exports:
   Main.sendMessage
   Main.sendToRoom
   Main.socketFilter
-  Main.ChatList
 module dependencies:
 package dependencies: ansi-terminal-0.6.2.3@ansi-terminal-0.6.2.3-448ipfN5j28Ha0AgPiJmdI
                       ansi-wl-pprint-0.6.7.3@ansi-wl-pprint-0.6.7.3-LVnipygDrAR1FEMFhjxcQX
@@ -211,97 +210,8 @@ d6208e249b3491cdf41c1d689ac8f2b0
                            ipv5)
                         ipv4 of s2# { DEFAULT ->
                  (# s2#, GHC.Tuple.() #) } } } }) -}
-8ccac448660fcd98d480455905214f80
-  $wdisconnectClient ::
-    Network.Socket.Types.Socket
-    -> GHC.Base.Maybe [GHC.Base.String]
-    -> GHC.Prim.MVar#
-         GHC.Prim.RealWorld
-         [(Network.Socket.Types.Socket, GHC.Base.String, GHC.Base.String,
-           GHC.Types.Int, GHC.Types.Int)]
-    -> GHC.Prim.State# GHC.Prim.RealWorld
-    -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
-  {- Arity: 4, Strictness: <L,U(U(U),A,A,A,U(U))><S,1*U><S,U><S,U>,
-     Inline: [0],
-     Unfolding: (\ (w :: Network.Socket.Types.Socket)
-                   (w1 :: GHC.Base.Maybe [GHC.Base.String])
-                   (ww :: GHC.Prim.MVar#
-                            GHC.Prim.RealWorld
-                            [(Network.Socket.Types.Socket, GHC.Base.String, GHC.Base.String,
-                              GHC.Types.Int, GHC.Types.Int)])
-                   (w2 :: GHC.Prim.State# GHC.Prim.RealWorld)[OneShot] ->
-                 case w1 of wild {
-                   GHC.Base.Nothing -> Main.$wfail w2
-                   GHC.Base.Just ds
-                   -> case ds of wild1 {
-                        [] -> Main.$wfail w2
-                        : name ds1
-                        -> case GHC.Prim.readMVar#
-                                  @ GHC.Prim.RealWorld
-                                  @ [(Network.Socket.Types.Socket, GHC.Base.String, GHC.Base.String,
-                                      GHC.Types.Int, GHC.Types.Int)]
-                                  ww
-                                  w2 of ds2 { (#,#) ipv ipv1 ->
-                           let {
-                             f :: GHC.Types.Int
-                             = case Main.findJoinId w ipv1 of wild2 {
-                                 GHC.Base.Nothing
-                                 -> case ipv1 of wild3 {
-                                      [] -> Main.disconnectClient4
-                                      : ipv2 ipv3
-                                      -> case GHC.Base.map
-                                                @ (Network.Socket.Types.Socket, GHC.Base.String,
-                                                   GHC.Base.String, GHC.Types.Int, GHC.Types.Int)
-                                                @ GHC.Types.Int
-                                                Main.disconnectClient3
-                                                wild3 of wild4 {
-                                           [] -> GHC.List.maximum2
-                                           : ipv4 ipv5
-                                           -> case ipv4 of ww1 { GHC.Types.I# ww2 ->
-                                              case GHC.List.$wgo ipv5 ww2 of ww3 { DEFAULT ->
-                                              GHC.Types.I# (GHC.Prim.+# ww3 1#) } } } }
-                                 GHC.Base.Just v -> v }
-                           } in
-                           letrec {
-                             go :: [GHC.Types.Int]
-                                   -> GHC.Prim.State# GHC.Prim.RealWorld
-                                   -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
-                               {- Arity: 2, Strictness: <S,1*U><S,U> -}
-                             = \ (ds3 :: [GHC.Types.Int])
-                                 (eta :: GHC.Prim.State# GHC.Prim.RealWorld)[OneShot] ->
-                               case ds3 of wild2 {
-                                 [] -> (# eta, GHC.Tuple.() #)
-                                 : y ys
-                                 -> case Main.$wdiscSend
-                                           w
-                                           f
-                                           name
-                                           ww
-                                           y
-                                           eta of ds4 { (#,#) ipv2 ipv3 ->
-                                    go ys ipv2 } }
-                           } in
-                           case go (Main.getChats w ipv1) ipv of ds3 { (#,#) ipv2 ipv3 ->
-                           case w of ww1 { Network.Socket.Types.MkSocket ww2 ww3 ww4 ww5 ww6 ->
-                           case ww6 of ww7 { GHC.MVar.MVar ww8 ->
-                           case Network.Socket.$wclose
-                                  ww2
-                                  ww8
-                                  ipv2 of ds4 { (#,#) ipv4 ipv5 ->
-                           case GHC.Prim.myThreadId# ipv4 of ds5 { (#,#) ipv6 ipv7 ->
-                           case GHC.Prim.killThread#
-                                  @ GHC.Exception.SomeException
-                                  ipv7
-                                  Main.disconnectClient2
-                                  ipv6 of s1 { DEFAULT ->
-                           (# s1, GHC.Tuple.() #) } } } } } } } } }) -}
 cbd222fd3bdfd65b0f63e2a09770165c
   $wfail ::
-    GHC.Prim.State# GHC.Prim.RealWorld
-    -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
-  {- Arity: 1, Strictness: <B,A>b, Inline: [0] -}
-cacf59b9cfdab25d92d039058bd0f3d7
-  $wfail1 ::
     GHC.Prim.State# GHC.Prim.RealWorld
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
   {- Arity: 1, Strictness: <B,A>b, Inline: [0] -}
@@ -411,10 +321,6 @@ cacf59b9cfdab25d92d039058bd0f3d7
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
   {- Arity: 5, Strictness: <L,U(U)><L,U(U)><S,1*U><L,1*U(U)><S,U>,
      Inline: [0] -}
-998d73f8f1026a422ba1d19f1ae7b24c
-  type ChatList =
-    [(Network.Socket.Types.Socket, GHC.Base.String, GHC.Base.String,
-      GHC.Types.Int, GHC.Types.Int)]
 fd5dab5a53993c2e7fe29874ce70c587
   addClient ::
     Network.Socket.Types.Socket
@@ -721,7 +627,7 @@ e00c7ea0f5970952fc757a3229bc43c8
     -> GHC.Prim.State# GHC.Prim.RealWorld
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
   {- Arity: 5, Strictness: <L,1*U(U)><L,U><L,U><S,1*U><S,U> -}
-cebb9736feb5c729611918cd1401e098
+57f0bcf3773e2a6dbe975ea11bacbd54
   disconnectClient ::
     Network.Socket.Types.Socket
     -> GHC.Base.Maybe [GHC.Base.String]
@@ -730,7 +636,7 @@ cebb9736feb5c729611918cd1401e098
            GHC.Types.Int, GHC.Types.Int)]
     -> GHC.Types.IO ()
   {- Arity: 4,
-     Strictness: <L,U(U(U),A,A,A,U(U))><S,1*U><S(S),1*U(U)><S,U>,
+     Strictness: <L,U(U(U),A,A,A,U(U))><S,1*U><L,1*U(U)><S,U>,
      Unfolding: InlineRule (0, True, True)
                 Main.disconnectClient1
                   `cast`
@@ -740,7 +646,7 @@ cebb9736feb5c729611918cd1401e098
                          [(Network.Socket.Types.Socket, GHC.Base.String, GHC.Base.String,
                            GHC.Types.Int, GHC.Types.Int)]>_R
                  ->_R Sym (GHC.Types.N:IO[0] <()>_R)) -}
-3b9693a7f76dea4813f3141699c4021d
+3d89fa3f2e80b078318df3877d5f2854
   disconnectClient1 ::
     Network.Socket.Types.Socket
     -> GHC.Base.Maybe [GHC.Base.String]
@@ -750,17 +656,87 @@ cebb9736feb5c729611918cd1401e098
     -> GHC.Prim.State# GHC.Prim.RealWorld
     -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
   {- Arity: 4,
-     Strictness: <L,U(U(U),A,A,A,U(U))><S,1*U><S(S),1*U(U)><S,U>,
-     Inline: INLINE[0],
-     Unfolding: InlineRule (4, True, False)
-                (\ (w :: Network.Socket.Types.Socket)
-                   (w1 :: GHC.Base.Maybe [GHC.Base.String])
-                   (w2 :: GHC.MVar.MVar
-                            [(Network.Socket.Types.Socket, GHC.Base.String, GHC.Base.String,
-                              GHC.Types.Int, GHC.Types.Int)])
-                   (w3 :: GHC.Prim.State# GHC.Prim.RealWorld)[OneShot] ->
-                 case w2 of ww { GHC.MVar.MVar ww1 ->
-                 Main.$wdisconnectClient w w1 ww1 w3 }) -}
+     Strictness: <L,U(U(U),A,A,A,U(U))><S,1*U><L,1*U(U)><S,U>,
+     Unfolding: (\ (s :: Network.Socket.Types.Socket)
+                   (ds :: GHC.Base.Maybe [GHC.Base.String])
+                   (chatList :: GHC.MVar.MVar
+                                  [(Network.Socket.Types.Socket, GHC.Base.String, GHC.Base.String,
+                                    GHC.Types.Int, GHC.Types.Int)])
+                   (eta :: GHC.Prim.State# GHC.Prim.RealWorld)[OneShot] ->
+                 case ds of wild {
+                   GHC.Base.Nothing
+                   -> GHC.IO.Handle.Text.hPutStr2
+                        GHC.IO.Handle.FD.stdout
+                        Main.disconnectClient6
+                        GHC.Types.True
+                        eta
+                   GHC.Base.Just ds1
+                   -> case ds1 of wild1 {
+                        []
+                        -> case Main.disconnectClient5
+                           ret_ty (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
+                           of {}
+                        : name ds2
+                        -> case chatList of wild2 { GHC.MVar.MVar mvar# ->
+                           case GHC.Prim.readMVar#
+                                  @ GHC.Prim.RealWorld
+                                  @ [(Network.Socket.Types.Socket, GHC.Base.String, GHC.Base.String,
+                                      GHC.Types.Int, GHC.Types.Int)]
+                                  mvar#
+                                  eta of ds3 { (#,#) ipv ipv1 ->
+                           let {
+                             f :: GHC.Types.Int
+                             = case Main.findJoinId s ipv1 of wild3 {
+                                 GHC.Base.Nothing
+                                 -> case ipv1 of wild4 {
+                                      [] -> Main.disconnectClient4
+                                      : ipv2 ipv3
+                                      -> case GHC.Base.map
+                                                @ (Network.Socket.Types.Socket, GHC.Base.String,
+                                                   GHC.Base.String, GHC.Types.Int, GHC.Types.Int)
+                                                @ GHC.Types.Int
+                                                Main.disconnectClient3
+                                                wild4 of wild5 {
+                                           [] -> GHC.List.maximum2
+                                           : ipv4 ipv5
+                                           -> case ipv4 of ww { GHC.Types.I# ww1 ->
+                                              case GHC.List.$wgo ipv5 ww1 of ww2 { DEFAULT ->
+                                              GHC.Types.I# (GHC.Prim.+# ww2 1#) } } } }
+                                 GHC.Base.Just v -> v }
+                           } in
+                           letrec {
+                             go :: [GHC.Types.Int]
+                                   -> GHC.Prim.State# GHC.Prim.RealWorld
+                                   -> (# GHC.Prim.State# GHC.Prim.RealWorld, () #)
+                               {- Arity: 2, Strictness: <S,1*U><S,U> -}
+                             = \ (ds4 :: [GHC.Types.Int])
+                                 (eta1 :: GHC.Prim.State# GHC.Prim.RealWorld)[OneShot] ->
+                               case ds4 of wild3 {
+                                 [] -> (# eta1, GHC.Tuple.() #)
+                                 : y ys
+                                 -> case Main.$wdiscSend
+                                           s
+                                           f
+                                           name
+                                           mvar#
+                                           y
+                                           eta1 of ds5 { (#,#) ipv2 ipv3 ->
+                                    go ys ipv2 } }
+                           } in
+                           case go (Main.getChats s ipv1) ipv of ds4 { (#,#) ipv2 ipv3 ->
+                           case s of ww { Network.Socket.Types.MkSocket ww1 ww2 ww3 ww4 ww5 ->
+                           case ww5 of ww6 { GHC.MVar.MVar ww7 ->
+                           case Network.Socket.$wclose
+                                  ww1
+                                  ww7
+                                  ipv2 of ds5 { (#,#) ipv4 ipv5 ->
+                           case GHC.Prim.myThreadId# ipv4 of ds6 { (#,#) ipv6 ipv7 ->
+                           case GHC.Prim.killThread#
+                                  @ GHC.Exception.SomeException
+                                  ipv7
+                                  Main.disconnectClient2
+                                  ipv6 of s1 { DEFAULT ->
+                           (# s1, GHC.Tuple.() #) } } } } } } } } } }) -}
 1b2a80839ab5b4362141b0d321e079a4
   disconnectClient2 :: GHC.Exception.SomeException
   {- Unfolding: (GHC.IO.Exception.$fExceptionAsyncException_$ctoException
@@ -779,6 +755,13 @@ ad9dfeaa73df08a50b4e5b5021874ae7
 1314b865d2005fc1bfc2b7560bcfc5eb
   disconnectClient4 :: GHC.Types.Int
   {- HasNoCafRefs, Strictness: m, Unfolding: (GHC.Types.I# 0#) -}
+fa697d90804acd395c55c19940781d59
+  disconnectClient5 :: GHC.Types.IO ()
+  {- Strictness: x -}
+8946bc699f61db3e7f47b05351323f17
+  disconnectClient6 :: [GHC.Types.Char]
+  {- Unfolding: (GHC.CString.unpackCString#
+                   "nothing to disconnect"#) -}
 0e14e801fe54537c26e269df1a7c8f4d
   filterClient ::
     Network.Socket.Types.Socket
@@ -1139,7 +1122,7 @@ c838e8709d07a67439e89f6325ee06a6
                    (w3 :: GHC.Prim.State# GHC.Prim.RealWorld)[OneShot] ->
                  case w of ww { Network.Socket.Types.MkSocket ww1 ww2 ww3 ww4 ww5 ->
                  Main.$wremoveClient ww1 ww5 w1 w2 w3 }) -}
-882242acb50fd5a3ac4725c086eb97f1
+cccdc897d846b77b5dd997ad45161592
   sendMessage ::
     Network.Socket.Types.Socket
     -> GHC.Base.Maybe [GHC.Base.String]
@@ -1158,7 +1141,7 @@ c838e8709d07a67439e89f6325ee06a6
                          [(Network.Socket.Types.Socket, GHC.Base.String, GHC.Base.String,
                            GHC.Types.Int, GHC.Types.Int)]>_R
                  ->_R Sym (GHC.Types.N:IO[0] <()>_R)) -}
-d18dc113eaa2ee3eba8c592e1e2fb7b6
+e0d10d3bc5cf4f85595d5b056e069646
   sendMessage1 ::
     Network.Socket.Types.Socket
     -> GHC.Base.Maybe [GHC.Base.String]
@@ -1193,16 +1176,16 @@ d18dc113eaa2ee3eba8c592e1e2fb7b6
                         ipv } } }
                    GHC.Base.Just ds2
                    -> case ds2 of wild1 {
-                        [] -> Main.$wfail1 eta
+                        [] -> Main.$wfail eta
                         : ref ds3
                         -> case ds3 of wild2 {
-                             [] -> Main.$wfail1 eta
+                             [] -> Main.$wfail eta
                              : jid ds4
                              -> case ds4 of wild3 {
-                                  [] -> Main.$wfail1 eta
+                                  [] -> Main.$wfail eta
                                   : name ds5
                                   -> case ds5 of wild4 {
-                                       [] -> Main.$wfail1 eta
+                                       [] -> Main.$wfail eta
                                        : mess ds6
                                        -> case ds1 of wild5 { GHC.MVar.MVar mvar# ->
                                           case GHC.Prim.readMVar#

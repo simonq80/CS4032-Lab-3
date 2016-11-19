@@ -14,7 +14,7 @@ import System.Random
 import Text.Regex
 import Data.Maybe
 
-type ChatList = [(Socket, String, String, Int, Int)] -- socket name chat joinid chatid
+-- user store : [(socket username chatname joinid chatid)]
 
 main = do
     port:_ <- getArgs
@@ -70,13 +70,13 @@ parseMessage s _  ('H':'E':'L':'O':m) _ = do
     send s  (B8.pack $ ("HELO" ++ m ++ "IP:" ++ ((splitOn ":" (show name))!!0) ++ "\nPort:"++ ((splitOn ":" (show name))!!1) ++ "\nStudentID:13327420\n"))
     putStrLn "Helo text sent"
 parseMessage s _ ('J':'O':'I':'N':'_':m) chatList = do
-    addClient s (matchRegex (mkRegex "CHATROOM:(.*)\nCLIENT_IP:0\nPORT:0\nCLIENT_NAME:(.*)\n") m) chatList
+    addClient s (matchRegex (mkRegex "CHATROOM:(.*)\nCLIENT_IP:.?0\nPORT:.?0\nCLIENT_NAME:(.*)\n") m) chatList
 parseMessage s _ ('L':'E':'A':'V':'E':'_':m) chatList = do
     removeClient s (matchRegex (mkRegex "CHATROOM:(.*)\nJOIN_ID:(.*)\nCLIENT_NAME:(.*)\n") m) chatList
 parseMessage s _ ('C':'H':'A':'T':':':m) chatList = do
     sendMessage s (matchRegex (mkRegex "(.*)\nJOIN_ID:(.*)\nCLIENT_NAME:(.*)\nMESSAGE:(.*)\n\n") m) chatList
 parseMessage s _ ('D':'I':'S':'C':m) chatList = do
-    disconnectClient s (matchRegex (mkRegex "ONNECT:0\nPORT:0\nCLIENT_NAME:(.*)\n") m) chatList
+    disconnectClient s (matchRegex (mkRegex "ONNECT:.?0\nPORT:.?0\nCLIENT_NAME:(.*)\n") m) chatList
     close s
     tid <- myThreadId
     killThread tid
@@ -85,6 +85,8 @@ parseMessage s _ m _ = do
 
 
 disconnectClient :: Socket -> Maybe [String] -> MVar [(Socket, String, String, Int, Int)] -> IO ()
+disconnectClient s Nothing chatList = do
+    putStrLn "nothing to disconnect"
 disconnectClient s (Just (name:_)) chatList = do
     list <- readMVar chatList
     mapM_ (discSend s (getJoinId s list) name chatList) (getChats s list)  
