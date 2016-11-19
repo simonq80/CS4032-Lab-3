@@ -75,6 +75,10 @@ parseMessage s _ ('L':'E':'A':'V':'E':'_':m) chatList = do
     removeClient s (matchRegex (mkRegex "CHATROOM:(.*)\nJOIN_ID:(.*)\nCLIENT_NAME:(.*)\n") m) chatList
 parseMessage s _ ('C':'H':'A':'T':':':m) chatList = do
     sendMessage s (matchRegex (mkRegex "(.*)\nJOINID:(.*)\nCLIENT_NAME:(.*)\nMESSAGE:(.*)\n\n") m) chatList
+parseMessage s _ ('D':'I':'S':'C':_) chatList = do
+    close s
+    tid <- myThreadId
+    killThread tid
 parseMessage s _ m _ = do
     putStrLn ("some other message recieved(" ++ m ++ ")")
 
