@@ -29,11 +29,11 @@ version :: Version
 version = Version [0,1,0,0] []
 bindir, libdir, datadir, libexecdir, sysconfdir :: FilePath
 
-bindir     = "/Lab2/CS4032-Lab-2/Lab2Stack/.stack-work/install/x86_64-linux/lts-7.8/8.0.1/bin"
-libdir     = "/Lab2/CS4032-Lab-2/Lab2Stack/.stack-work/install/x86_64-linux/lts-7.8/8.0.1/lib/x86_64-linux-ghc-8.0.1/Lab2Stack-0.1.0.0"
-datadir    = "/Lab2/CS4032-Lab-2/Lab2Stack/.stack-work/install/x86_64-linux/lts-7.8/8.0.1/share/x86_64-linux-ghc-8.0.1/Lab2Stack-0.1.0.0"
-libexecdir = "/Lab2/CS4032-Lab-2/Lab2Stack/.stack-work/install/x86_64-linux/lts-7.8/8.0.1/libexec"
-sysconfdir = "/Lab2/CS4032-Lab-2/Lab2Stack/.stack-work/install/x86_64-linux/lts-7.8/8.0.1/etc"
+bindir     = "/Lab3/CS4032-Lab-2/Lab2Stack/.stack-work/install/x86_64-linux/lts-7.8/8.0.1/bin"
+libdir     = "/Lab3/CS4032-Lab-2/Lab2Stack/.stack-work/install/x86_64-linux/lts-7.8/8.0.1/lib/x86_64-linux-ghc-8.0.1/Lab2Stack-0.1.0.0"
+datadir    = "/Lab3/CS4032-Lab-2/Lab2Stack/.stack-work/install/x86_64-linux/lts-7.8/8.0.1/share/x86_64-linux-ghc-8.0.1/Lab2Stack-0.1.0.0"
+libexecdir = "/Lab3/CS4032-Lab-2/Lab2Stack/.stack-work/install/x86_64-linux/lts-7.8/8.0.1/libexec"
+sysconfdir = "/Lab3/CS4032-Lab-2/Lab2Stack/.stack-work/install/x86_64-linux/lts-7.8/8.0.1/etc"
 
 getBinDir, getLibDir, getDataDir, getLibexecDir, getSysconfDir :: IO FilePath
 getBinDir = catchIO (getEnv "Lab2Stack_bindir") (\_ -> return bindir)

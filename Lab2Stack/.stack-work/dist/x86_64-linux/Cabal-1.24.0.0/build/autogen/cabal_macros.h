@@ -42,6 +42,20 @@
   (major1) == 0 && (major2) <  12 || \
   (major1) == 0 && (major2) == 12 && (minor) <= 1)
 
+/* package random-1.1 */
+#define VERSION_random "1.1"
+#define MIN_VERSION_random(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  1 || \
+  (major1) == 1 && (major2) == 1 && (minor) <= 0)
+
+/* package regex-compat-0.95.1 */
+#define VERSION_regex_compat "0.95.1"
+#define MIN_VERSION_regex_compat(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  95 || \
+  (major1) == 0 && (major2) == 95 && (minor) <= 1)
+
 /* package split-0.2.3.1 */
 #define VERSION_split "0.2.3.1"
 #define MIN_VERSION_split(major1,major2,minor) (\
